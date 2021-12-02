@@ -1,0 +1,8 @@
+{
+	"title": "this",
+	"description": "is ",
+	"installation": "the",
+	"usage": "answers",
+	"contribution": "to ",
+	"test": "this"
+}
