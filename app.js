@@ -3,9 +3,18 @@ const inquirer = require("inquirer")
 const fs = require("fs")
 const generateMarkdown = require("./utils/generateMarkdown")
 // TODO: Create an array of questions for user input
+let generateTable = function (){
+    return `* [Installation](#installation)
+    * [Usage](#usage)
+    * [Credits](#credits)
+    * [License](#license)
+    `
+}
+
 const promptQuestions = ()=> {
  
     return inquirer.prompt([
+        
         {
             type: 'input',
             name: 'title',
@@ -86,6 +95,32 @@ const promptQuestions = ()=> {
         },
         {
             type: 'input',
+            name: 'email',
+            message: 'Enter your email (Required)',
+            validate: githubInput => {
+                if (githubInput) {
+                    return true;
+                } else {
+                    console.log('Please enter your email!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'github',
+            message: 'Enter your github link (Required)',
+            validate: githubInput => {
+                if (githubInput) {
+                    return true;
+                } else {
+                    console.log('Please enter your github link!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
             name: 'about',
             message: 'Provide some information about yourself:',
             when: ({ confirmAbout }) => {
@@ -95,9 +130,36 @@ const promptQuestions = ()=> {
                   return false;
                 }
             }
+        },
+        {
+            type: 'confirm',
+            name: 'tableContent',
+            message: 'Would you like to enter some information about yourself for an "About" section?',
+            // default: true
+            when: ({tableContent}) => {
+                if (tableContent) {
+                    return generateTable()
+                } else {
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'about',
+            message: 'Provide some information about yourself:',
+            when: ({ tableContent }) => {
+                if (tableContent) {
+                  return true;
+                } else {
+                  return false;
+                }
+            }
         }
       ])
 }
+
+
 // TODO: Create a function to write README file
 // function writeToFile(fileName, data) {}
 // const writeFile = data => {
@@ -123,39 +185,26 @@ const promptQuestions = ()=> {
 //     console.log(data);
 //     return writeFile(data)
 //     })
-// promptQuestions()
-//     .then(writeFile = data => {
-//             return new Promise((resolve, reject) => {
-//               fs.writeFile('README.md', JSON.stringify(generateMarkdown(data),null,'\t'), err => {
-//                 // if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
-//                 if (err) {
-//                   reject(err);
-//                   // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
-//                   return;
-//                 }
+promptQuestions()
+    .then(writeFile = data => {
+            return new Promise((resolve, reject) => {
+              fs.writeFile('README.md', generateMarkdown(data), err => {
+                // if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
+                if (err) {
+                  reject(err);
+                  // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
+                  return;
+                }
           
-//                 // if everything went well, resolve the Promise and send the successful data to the `.then()` method
-//                 resolve({
-//                   ok: true,
-//                   message: 'File created!'
-//                 });
-//               });
-//             });
-//           })
+                // if everything went well, resolve the Promise and send the successful data to the `.then()` method
+                resolve({
+                  ok: true,
+                  message: 'File created!'
+                });
+              });
+            });
+    })
  
-// promptQuestions()
-// .then(answers => {
-//   console.log(answers);
-//   fs.writeFile("output.txt", JSON.stringify(answers, null, '\t'),(err)=>{
-//       if (err) {
-//           console.log(err);
-//       } else {
-//           console.log("success")
-//       }
-//   })
-// })
-
-
 // TODO: Create a function to initialize app
 function init() {}
 
